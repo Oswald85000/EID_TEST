@@ -1,0 +1,12 @@
+FROM python:3.12-slim
+RUN apt-get update && apt-get install -y build-essential
+
+WORKDIR /app
+COPY . .
+
+RUN gcc -std=c99 -shared -fPIC -o /app/libeid.so libeid.c
+ENV LD_LIBRARY_PATH=/app
+
+RUN pip install --no-cache-dir flask prometheus_client cffi
+EXPOSE 8000
+CMD ["python","ei_daemon.py"]

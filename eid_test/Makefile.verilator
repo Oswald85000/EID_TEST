@@ -1,0 +1,32 @@
+# =========  Verilator test-bench for EID_CTRL  ===============================
+
+VSRCS := eid_ctrl.v rtl/qmul_sat.sv rtl/qadd_sat.sv
+INC   := -Irtl/include
+TB    := tests/tb_verilator.cpp
+TOP   := eid_ctrl
+
+MKF   := V$(TOP).mk          # ex.: Veid_ctrl.mk   (généré par Verilator)
+EXE   := V$(TOP)             # ex.: Veid_ctrl      (binaire dans obj_dir)
+
+# -----------------------------------------------------------------------------#
+# 1. Lancement de Verilator : génère le makefile (MKF) + C++
+verilate:
+	verilator $(INC) --sv --cc $(VSRCS) -O2 --trace \
+	          -CFLAGS "-O2 -std=c++17"             \
+	          --exe $(TB)                          \
+	          --coverage --coverage-line           \
+	          --top-module $(TOP)
+# 2. Compilation du modèle C++ avec le makefile généré
+build: verilate
+	$(MAKE) -C obj_dir -f $(MKF) -j
+
+# 3. Exécution + génération de la base de données de couverture
+run: build
+	obj_dir/$(EXE) +cov
+	verilator_coverage --write-info cov.info cov.vdb
+
+# 4. Rapport HTML de couverture
+cov: run
+	genhtml cov.info --output-directory reports/coverage
+
+.PHONY: verilate build run cov

@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 5s          # toutes les 5 s
+
+scrape_configs:
+  - job_name: 'eid-daemon'
+    static_configs:
+      - targets: ['eid:8000']   # service Flask dans docker-compose
