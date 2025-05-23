@@ -1,0 +1,14 @@
+# Ignore build artifacts
+**/build/
+**/obj_dir/
+*.vcd
+*.vdb
+*.dat
+*.info
+*.DS_Store
+**/graf-data/
+**/eid_demo
+**/sim.vvp
+**/make_vectors.dSYM/
+**/make_vectors
+**/reports/
